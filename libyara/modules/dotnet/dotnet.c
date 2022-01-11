@@ -351,6 +351,7 @@ void dotnet_parse_tilde_2(
   PASSEMBLYREF_TABLE assemblyref_table;
   PFIELDRVA_TABLE fieldrva_table;
   PMANIFESTRESOURCE_TABLE manifestresource_table;
+  PMETHODDEF_TABLE methoddef_table;
   PMODULEREF_TABLE moduleref_table;
   PCUSTOMATTRIBUTE_TABLE customattribute_table;
   PCONSTANT_TABLE constant_table;
@@ -522,9 +523,48 @@ void dotnet_parse_tilde_2(
       break;
 
     case BIT_METHODDEF:
-      table_offset += (4 + 2 + 2 + index_sizes.string + index_sizes.blob +
-                       index_sizes.param) *
-                      num_rows;
+      row_size =
+          (4 + 2 + 2 + index_sizes.string + index_sizes.signature +
+           index_sizes.param);
+
+      row_ptr = table_offset;
+
+      for (i = 0; i < num_rows; i++)
+      {
+        methoddef_table = (PMETHODDEF_TABLE) row_ptr;
+
+        if (!struct_fits_in_pe(pe, methoddef_table, METHODDEF_TABLE))
+          break;
+
+        set_integer(
+            yr_le32toh(methoddef_table->RVA), pe->object, "methods[%i].RVA", i);
+
+        set_integer(
+            yr_le32toh(methoddef_table->ImplFlags),
+            pe->object,
+            "methods[%i].ImplFlags",
+            i);
+
+        set_integer(
+            yr_le32toh(methoddef_table->Flags),
+            pe->object,
+            "methods[%i].Flags",
+            i);
+
+        name = pe_get_dotnet_string(
+            pe, string_offset, DOTNET_STRING_INDEX(methoddef_table->Name));
+
+        if (name != NULL)
+        {
+          set_string(name, pe->object, "methods[%i].Name", i);
+        }
+
+        row_ptr += row_size;
+      }
+
+      set_integer(i, pe->object, "number_of_methods");
+
+      table_offset += row_size * num_rows;
       break;
 
     case BIT_PARAM:
@@ -1714,6 +1754,44 @@ begin_declarations
   declare_integer("COMIMAGE_FLAGS_NATIVE_ENTRYPOINT");
   declare_integer("COMIMAGE_FLAGS_TRACKDEBUGDATA");
 
+  declare_integer("METHOD_FLAGS_MEMBER_ACCESS_MASK");
+  declare_integer("METHOD_FLAGS_COMPILER_CONTROLLED");
+  declare_integer("METHOD_FLAGS_FAM_AND_ASSEM");
+  declare_integer("METHOD_FLAGS_ASSEM");
+  declare_integer("METHOD_FLAGS_FAMILY");
+  declare_integer("METHOD_FLAGS_FAM_OR_ASSEM");
+  declare_integer("METHOD_FLAGS_PUBLIC");
+  declare_integer("METHOD_FLAGS_STATIC");
+  declare_integer("METHOD_FLAGS_FINAL");
+  declare_integer("METHOD_FLAGS_VIRTUAL");
+  declare_integer("METHOD_FLAGS_HIDE_BY_SIG");
+  declare_integer("METHOD_FLAGS_VTABLE_LAYOUT_MASK");
+  declare_integer("METHOD_FLAGS_REUSE_SLOT");
+  declare_integer("METHOD_FLAGS_NEW_SLOT");
+  declare_integer("METHOD_FLAGS_STRICT");
+  declare_integer("METHOD_FLAGS_ABSTRACT");
+  declare_integer("METHOD_FLAGS_SPECIAL_NAME");
+  declare_integer("METHOD_FLAGS_PINVOKE_IMPL");
+  declare_integer("METHOD_FLAGS_UNMANAGED_EXPORT");
+  declare_integer("METHOD_FLAGS_RTS_SPECIAL_NAME");
+  declare_integer("METHOD_FLAGS_HAS_SECURITY");
+  declare_integer("METHOD_FLAGS_REQUIRE_SEC_OBJECT");
+
+  declare_integer("METHOD_IMPL_FLAGS_CODE_TYPE_MASK");
+  declare_integer("METHOD_IMPL_FLAGS_IL");
+  declare_integer("METHOD_IMPL_FLAGS_IS_NATIVE");
+  declare_integer("METHOD_IMPL_FLAGS_OPTIL");
+  declare_integer("METHOD_IMPL_FLAGS_RUNTIME");
+  declare_integer("METHOD_IMPL_FLAGS_MANAGED_MASK");
+  declare_integer("METHOD_IMPL_FLAGS_UNMANAGED");
+  declare_integer("METHOD_IMPL_FLAGS_MANAGED");
+  declare_integer("METHOD_IMPL_FLAGS_FORWARD_REF");
+  declare_integer("METHOD_IMPL_FLAGS_PRESERVE_SIG");
+  declare_integer("METHOD_IMPL_FLAGS_INTERNAL_CALL");
+  declare_integer("METHOD_IMPL_FLAGS_SYNCHRONIZED");
+  declare_integer("METHOD_IMPL_FLAGS_NO_INLINING");
+  declare_integer("METHOD_IMPL_FLAGS_NO_OPTIMIZATION");
+
   declare_integer("Flags");
   declare_integer("major_runtime_version");
   declare_integer("minor_runtime_version");
@@ -1726,6 +1804,15 @@ begin_declarations
   end_struct_array("streams")
 
   declare_integer("number_of_streams");
+
+  begin_struct_array("methods")
+    declare_integer("RVA");
+    declare_integer("ImplFlags");
+    declare_integer("Flags");
+    declare_string("Name");
+  end_struct_array("methods");
+
+  declare_integer("number_of_methods");
 
   declare_string_array("guids");
   declare_integer("number_of_guids");
@@ -1811,6 +1898,105 @@ int module_load(
       COMIMAGE_FLAGS_TRACKDEBUGDATA,
       module_object,
       "COMIMAGE_FLAGS_TRACKDEBUGDATA");
+
+  // Flags for methods [MethodAttributes]
+  set_integer(
+      METHOD_FLAGS_MEMBER_ACCESS_MASK,
+      module_object,
+      "METHOD_FLAGS_MEMBER_ACCESS_MASK");
+  set_integer(
+      METHOD_FLAGS_COMPILER_CONTROLLED,
+      module_object,
+      "METHOD_FLAGS_COMPILER_CONTROLLED");
+  set_integer(METHOD_FLAGS_PRIVATE, module_object, "METHOD_FLAGS_PRIVATE");
+  set_integer(
+      METHOD_FLAGS_FAM_AND_ASSEM, module_object, "METHOD_FLAGS_FAM_AND_ASSEM");
+  set_integer(METHOD_FLAGS_ASSEM, module_object, "METHOD_FLAGS_ASSEM");
+  set_integer(METHOD_FLAGS_FAMILY, module_object, "METHOD_FLAGS_FAMILY");
+  set_integer(
+      METHOD_FLAGS_FAM_OR_ASSEM, module_object, "METHOD_FLAGS_FAM_OR_ASSEM");
+  set_integer(METHOD_FLAGS_PUBLIC, module_object, "METHOD_FLAGS_PUBLIC");
+  set_integer(METHOD_FLAGS_STATIC, module_object, "METHOD_FLAGS_STATIC");
+  set_integer(METHOD_FLAGS_FINAL, module_object, "METHOD_FLAGS_FINAL");
+  set_integer(METHOD_FLAGS_VIRTUAL, module_object, "METHOD_FLAGS_VIRTUAL");
+  set_integer(
+      METHOD_FLAGS_HIDE_BY_SIG, module_object, "METHOD_FLAGS_HIDE_BY_SIG");
+  set_integer(
+      METHOD_FLAGS_VTABLE_LAYOUT_MASK,
+      module_object,
+      "METHOD_FLAGS_VTABLE_LAYOUT_MASK");
+  set_integer(
+      METHOD_FLAGS_REUSE_SLOT, module_object, "METHOD_FLAGS_REUSE_SLOT");
+  set_integer(METHOD_FLAGS_NEW_SLOT, module_object, "METHOD_FLAGS_NEW_SLOT");
+  set_integer(METHOD_FLAGS_STRICT, module_object, "METHOD_FLAGS_STRICT");
+  set_integer(METHOD_FLAGS_ABSTRACT, module_object, "METHOD_FLAGS_ABSTRACT");
+  set_integer(
+      METHOD_FLAGS_SPECIAL_NAME, module_object, "METHOD_FLAGS_SPECIAL_NAME");
+  set_integer(
+      METHOD_FLAGS_PINVOKE_IMPL, module_object, "METHOD_FLAGS_PINVOKE_IMPL");
+  set_integer(
+      METHOD_FLAGS_UNMANAGED_EXPORT,
+      module_object,
+      "METHOD_FLAGS_UNMANAGED_EXPORT");
+  set_integer(
+      METHOD_FLAGS_RTS_SPECIAL_NAME,
+      module_object,
+      "METHOD_FLAGS_RTS_SPECIAL_NAME");
+  set_integer(
+      METHOD_FLAGS_HAS_SECURITY, module_object, "METHOD_FLAGS_HAS_SECURITY");
+  set_integer(
+      METHOD_FLAGS_REQUIRE_SEC_OBJECT,
+      module_object,
+      "METHOD_FLAGS_REQUIRE_SEC_OBJECT");
+
+  // Flags for methods [MethodImplAttributes]
+  set_integer(
+      METHOD_IMPL_FLAGS_CODE_TYPE_MASK,
+      module_object,
+      "METHOD_IMPL_FLAGS_CODE_TYPE_MASK");
+  set_integer(METHOD_IMPL_FLAGS_IL, module_object, "METHOD_IMPL_FLAGS_IL");
+  set_integer(
+      METHOD_IMPL_FLAGS_IS_NATIVE,
+      module_object,
+      "METHOD_IMPL_FLAGS_IS_NATIVE");
+  set_integer(
+      METHOD_IMPL_FLAGS_OPTIL, module_object, "METHOD_IMPL_FLAGS_OPTIL");
+  set_integer(
+      METHOD_IMPL_FLAGS_RUNTIME, module_object, "METHOD_IMPL_FLAGS_RUNTIME");
+  set_integer(
+      METHOD_IMPL_FLAGS_MANAGED_MASK,
+      module_object,
+      "METHOD_IMPL_FLAGS_MANAGED_MASK");
+  set_integer(
+      METHOD_IMPL_FLAGS_UNMANAGED,
+      module_object,
+      "METHOD_IMPL_FLAGS_UNMANAGED");
+  set_integer(
+      METHOD_IMPL_FLAGS_MANAGED, module_object, "METHOD_IMPL_FLAGS_MANAGED");
+  set_integer(
+      METHOD_IMPL_FLAGS_FORWARD_REF,
+      module_object,
+      "METHOD_IMPL_FLAGS_FORWARD_REF");
+  set_integer(
+      METHOD_IMPL_FLAGS_PRESERVE_SIG,
+      module_object,
+      "METHOD_IMPL_FLAGS_PRESERVE_SIG");
+  set_integer(
+      METHOD_IMPL_FLAGS_INTERNAL_CALL,
+      module_object,
+      "METHOD_IMPL_FLAGS_INTERNAL_CALL");
+  set_integer(
+      METHOD_IMPL_FLAGS_SYNCHRONIZED,
+      module_object,
+      "METHOD_IMPL_FLAGS_SYNCHRONIZED");
+  set_integer(
+      METHOD_IMPL_FLAGS_NO_INLINING,
+      module_object,
+      "METHOD_IMPL_FLAGS_NO_INLINING");
+  set_integer(
+      METHOD_IMPL_FLAGS_NO_OPTIMIZATION,
+      module_object,
+      "METHOD_IMPL_FLAGS_NO_OPTIMIZATION");
 
   foreach_memory_block(iterator, block)
   {
