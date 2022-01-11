@@ -1633,6 +1633,21 @@ void dotnet_parse_com(PE* pe)
 
   cli_header = (PCLI_HEADER)(pe->data + offset);
 
+  set_integer(yr_le32toh(cli_header->Flags), pe->object, "Flags");
+
+  set_integer(
+      yr_le16toh(cli_header->MajorRuntimeVersion),
+      pe->object,
+      "major_runtime_version");
+
+  set_integer(
+      yr_le16toh(cli_header->MinorRuntimeVersion),
+      pe->object,
+      "minor_runtime_version");
+
+  set_integer(
+      yr_le32toh(cli_header->EntryPointToken), pe->object, "entry_point");
+
   offset = metadata_root = pe_rva_to_offset(
       pe, yr_le32toh(cli_header->MetaData.VirtualAddress));
 
@@ -1692,6 +1707,17 @@ void dotnet_parse_com(PE* pe)
 begin_declarations
   declare_string("version");
   declare_string("module_name");
+  declare_integer("COMIMAGE_FLAGS_ILONLY");
+  declare_integer("COMIMAGE_FLAGS_32BITREQUIRED");
+  declare_integer("COMIMAGE_FLAGS_IL_LIBRARY");
+  declare_integer("COMIMAGE_FLAGS_STRONGNAMESIGNED");
+  declare_integer("COMIMAGE_FLAGS_NATIVE_ENTRYPOINT");
+  declare_integer("COMIMAGE_FLAGS_TRACKDEBUGDATA");
+
+  declare_integer("Flags");
+  declare_integer("major_runtime_version");
+  declare_integer("minor_runtime_version");
+  declare_integer("entry_point");
 
   begin_struct_array("streams")
     declare_string("name");
@@ -1767,6 +1793,24 @@ int module_load(
   YR_MEMORY_BLOCK* block;
   YR_MEMORY_BLOCK_ITERATOR* iterator = context->iterator;
   const uint8_t* block_data = NULL;
+
+  // Runtime Flags
+  set_integer(COMIMAGE_FLAGS_ILONLY, module_object, "COMIMAGE_FLAGS_ILONLY");
+  set_integer(
+      COMIMAGE_FLAGS_32BITREQUIRED, module_object, "COMIMAGE_FLAGS_32BITREQUIRED");
+  set_integer(COMIMAGE_FLAGS_IL_LIBRARY, module_object, "COMIMAGE_FLAGS_IL_LIBRARY");
+  set_integer(
+      COMIMAGE_FLAGS_STRONGNAMESIGNED,
+      module_object,
+      "COMIMAGE_FLAGS_STRONGNAMESIGNED");
+  set_integer(
+      COMIMAGE_FLAGS_NATIVE_ENTRYPOINT,
+      module_object,
+      "COMIMAGE_FLAGS_NATIVE_ENTRYPOINT");
+  set_integer(
+      COMIMAGE_FLAGS_TRACKDEBUGDATA,
+      module_object,
+      "COMIMAGE_FLAGS_TRACKDEBUGDATA");
 
   foreach_memory_block(iterator, block)
   {

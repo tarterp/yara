@@ -90,6 +90,20 @@ int main(int argc, char** argv)
       }",
       "tests/data/"
       "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
+
+  assert_true_rule_file(
+      "import \"dotnet\" \
+      rule test { \
+        condition: \
+          dotnet.entry_point == 0x600027A and \
+          dotnet.Flags & ( \
+            dotnet.COMIMAGE_FLAGS_ILONLY & \
+            dotnet.COMIMAGE_FLAGS_32BITREQUIRED) == \
+            dotnet.COMIMAGE_FLAGS_ILONLY & \
+            dotnet.COMIMAGE_FLAGS_32BITREQUIRED \
+      }",
+      "tests/data/"
+      "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
   yr_finalize();
 
   YR_DEBUG_FPRINTF(
