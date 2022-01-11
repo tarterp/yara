@@ -132,6 +132,17 @@ int main(int argc, char** argv)
       }",
       "tests/data/"
       "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
+
+  assert_true_rule_file(
+      "import \"dotnet\" \
+      rule test { \
+        condition: \
+          for any typeref in dotnet.typerefs : ( \
+            typeref.Namespace == \"DVDVideoSoft.Utils\" and \
+            typeref.Name == \"WindowUtils\") \
+      }",
+      "tests/data/"
+      "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
   yr_finalize();
 
   YR_DEBUG_FPRINTF(
