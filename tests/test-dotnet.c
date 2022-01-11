@@ -104,6 +104,34 @@ int main(int argc, char** argv)
       }",
       "tests/data/"
       "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
+
+  assert_true_rule_file(
+      "import \"dotnet\" \
+      rule test { \
+        condition: \
+          for any method in dotnet.methods : ( \
+              method.Name == \"DoSetControlValues\" and \
+              method.RVA == 0x2830 and \
+              method.ImplFlags & ( \
+                  dotnet.METHOD_IMPL_FLAGS_IL & \
+                  dotnet.METHOD_IMPL_FLAGS_MANAGED & \
+                  dotnet.METHOD_IMPL_FLAGS_NO_INLINING) == \
+                  dotnet.METHOD_IMPL_FLAGS_IL & \
+                  dotnet.METHOD_IMPL_FLAGS_MANAGED & \
+                  dotnet.METHOD_IMPL_FLAGS_NO_INLINING and \
+              method.Flags & ( \
+                  dotnet.METHOD_FLAGS_FAMILY & \
+                  dotnet.METHOD_FLAGS_VIRTUAL & \
+                  dotnet.METHOD_FLAGS_HIDE_BY_SIG & \
+                  dotnet.METHOD_FLAGS_REUSE_SLOT) == \
+                  dotnet.METHOD_FLAGS_FAMILY & \
+                  dotnet.METHOD_FLAGS_VIRTUAL & \
+                  dotnet.METHOD_FLAGS_HIDE_BY_SIG & \
+                  dotnet.METHOD_FLAGS_REUSE_SLOT \
+          ) \
+      }",
+      "tests/data/"
+      "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
   yr_finalize();
 
   YR_DEBUG_FPRINTF(
