@@ -310,6 +310,29 @@ typedef struct _MANIFESTRESOURCE_TABLE
 } MANIFESTRESOURCE_TABLE, *PMANIFESTRESOURCE_TABLE;
 
 //
+// TypeRef Table
+// ECMA-335 Section II.22.38
+//
+typedef struct _TYPEREF_TABLE
+{
+  union
+  {
+    WORD ResolutionScope_Short;
+    DWORD ResolutionScope_Long;
+  } ResolutionScope;
+  union
+  {
+    WORD Name_Short;
+    DWORD Name_Long;
+  } Name;
+  union
+  {
+    WORD Name_Short;
+    DWORD Name_Long;
+  } Namespace;
+} TYPEREF_TABLE, *PTYPEREF_TABLE;
+
+//
 // MethodDef Table
 // ECMA-335 Section II.22.26
 //
@@ -469,6 +492,7 @@ typedef struct _INDEX_SIZES
   uint8_t assemblyref;
   uint8_t genericparam;
   uint8_t signature;
+  uint8_t resolutionscope;
 } INDEX_SIZES, *PINDEX_SIZES;
 
 #pragma pack(pop)

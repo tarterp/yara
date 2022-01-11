@@ -353,6 +353,7 @@ void dotnet_parse_tilde_2(
   PMANIFESTRESOURCE_TABLE manifestresource_table;
   PMETHODDEF_TABLE methoddef_table;
   PMODULEREF_TABLE moduleref_table;
+  PTYPEREF_TABLE typeref_table;
   PCUSTOMATTRIBUTE_TABLE customattribute_table;
   PCONSTANT_TABLE constant_table;
   DWORD resource_size, implementation;
@@ -488,24 +489,54 @@ void dotnet_parse_tilde_2(
       row_size = (index_size + (index_sizes.string * 2));
       typeref_row_size = row_size;
       typeref_ptr = table_offset;
+      for (i = 0; i < num_rows; i++)
+      {
+        typeref_table = (PTYPEREF_TABLE) typeref_ptr;
+
+        if (!fits_in_pe(pe, typeref_table, row_size))
+          break;
+
+        // Name has variable sized fields prior in struct
+        if (index_sizes.string == 4)
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le32toh(*(DWORD*) (typeref_ptr + index_size)));
+        else
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le16toh(*(WORD*) (typeref_ptr + index_size)));
+
+        if (name != NULL)
+        {
+          set_string(name, pe->object, "typerefs[%i].Name", i);
+        }
+
+        // Namespace has variable sized fields prior in struct
+        if (index_sizes.string == 4)
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le32toh(
+                  *(DWORD*) (typeref_ptr + index_size + index_sizes.string)));
+        else
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le16toh(
+                  *(WORD*) (typeref_ptr + index_size + index_sizes.string)));
+        if (name != NULL)
+        {
+          set_string(name, pe->object, "typerefs[%i].Namespace", i);
+        }
+
+        typeref_ptr += typeref_row_size;
+      }
+
+      set_integer(i, pe->object, "number_of_typerefs");
+
       table_offset += row_size * num_rows;
-      break;
-
-    case BIT_TYPEDEF:
-      row_count = max_rows(
-          3,
-          yr_le32toh(rows.typedef_),
-          yr_le32toh(rows.typeref),
-          yr_le32toh(rows.typespec));
-
-      if (row_count > (0xFFFF >> 0x02))
-        index_size = 4;
-      else
-        index_size = 2;
-
-      table_offset += (4 + (index_sizes.string * 2) + index_size +
-                       index_sizes.field + index_sizes.methoddef) *
-                      num_rows;
       break;
 
     case BIT_FIELDPTR:
@@ -1813,6 +1844,13 @@ begin_declarations
   end_struct_array("methods");
 
   declare_integer("number_of_methods");
+
+  begin_struct_array("typerefs")
+    declare_string("Name");
+    declare_string("Namespace");
+  end_struct_array("typerefs");
+
+  declare_integer("number_of_typerefs");
 
   declare_string_array("guids");
   declare_integer("number_of_guids");
