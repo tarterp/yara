@@ -539,6 +539,23 @@ void dotnet_parse_tilde_2(
       table_offset += row_size * num_rows;
       break;
 
+    case BIT_TYPEDEF:
+      row_count = max_rows(
+          3,
+          yr_le32toh(rows.typedef_),
+          yr_le32toh(rows.typeref),
+          yr_le32toh(rows.typespec));
+
+      if (row_count > (0xFFFF >> 0x02))
+        index_size = 4;
+      else
+        index_size = 2;
+
+      table_offset += (4 + (index_sizes.string * 2) + index_size +
+                       index_sizes.field + index_sizes.methoddef) *
+                      num_rows;
+      break;
+
     case BIT_FIELDPTR:
       // This one is not documented in ECMA-335.
       table_offset += (index_sizes.field) * num_rows;
