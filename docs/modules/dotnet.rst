@@ -17,7 +17,7 @@ using attributes and features of the .NET file format. Let's see some examples:
     rule not_exactly_five_streams
     {
         condition:
-            dotnet.number_of_streams != 5
+            dotnet.number_of_rstreams != 5
     }
 
     rule blop_stream
@@ -29,6 +29,40 @@ using attributes and features of the .NET file format. Let's see some examples:
 
 Reference
 ---------
+
+.. c:type:: is_dotnet
+    
+    verifies the version string contained in the metadata root is valid
+
+.. c:type:: major_runtime_version
+
+    The major version contained in the CLI header
+
+.. c:type:: minor_runtime_version
+
+    The major version contained in the CLI header
+
+.. c:type:: Flags
+
+    CLI header Runtime Flags contains the following values
+    
+    .. c:member:: CORHEADER_IL_ONLY           
+
+    .. c:member:: CORHEADER_32_BIT_REQUIRED    
+
+    .. c:member:: CORHEADER_IL_LIBRARY       
+
+    .. c:member:: CORHEADER_STRONG_NAME_SIGNED 
+
+    .. c:member:: CORHEADER_NATIVE_ENTRYPOINT
+
+    .. c:member:: CORHEADER_TRACK_DEBUG_DATA
+
+.. c:type:: entry_point
+
+    If CORHEADER_NATIVE_ENTRYPOINT is set, EntryPointRVA represents an RVA 
+    to a native entrypoint. If CORHEADER_NATIVE_ENTRYPOINT is not set, 
+    EntryPointToken represents a managed entrypoint.
 
 .. c:type:: version
 
@@ -167,6 +201,130 @@ Reference
 
         String containing the public key or token which identifies the author of
         this assembly.
+
+.. c:type:: number_of_methods
+
+    the number of methods in the file
+
+.. c:type:: methods
+
+    A zero-based array of methods associating operations with a type. Individual
+    methods can be accessed by using the [] operator. Each method has the
+    following attributes:
+
+    .. c:member:: RVA
+
+        A relative virtual address of the method
+
+    .. c:member:: ImplFlags
+
+        Integer representing method implementation attributes with one of the 
+        following values:
+
+        .. c:member:: METHOD_IMPL_FLAGS_CODE_TYPE_MASK
+        
+        .. c:member:: METHOD_IMPL_FLAGS_IL            
+        
+        .. c:member:: METHOD_IMPL_FLAGS_IS_NATIVE     
+        
+        .. c:member:: METHOD_IMPL_FLAGS_OPTIL         
+        
+        .. c:member:: METHOD_IMPL_FLAGS_RUNTIME       
+        
+        .. c:member:: METHOD_IMPL_FLAGS_MANAGED_MASK  
+        
+        .. c:member:: METHOD_IMPL_FLAGS_UNMANAGED     
+        
+        .. c:member:: METHOD_IMPL_FLAGS_MANAGED       
+        
+        .. c:member:: METHOD_IMPL_FLAGS_FORWARD_REF   
+        
+        .. c:member:: METHOD_IMPL_FLAGS_PRESERVE_SIG  
+        
+        .. c:member:: METHOD_IMPL_FLAGS_INTERNAL_CALL 
+        
+        .. c:member:: METHOD_IMPL_FLAGS_SYNCHRONIZED  
+        
+        .. c:member:: METHOD_IMPL_FLAGS_NO_INLINING   
+        
+        .. c:member:: METHOD_IMPL_FLAGS_NO_OPTIMIZATION
+
+        *Example: dotnet.methods[0].ImplFlags & dotnet.METHOD_IMPL_FLAGS_IS_NATIVE*
+
+    .. c:member:: Flags
+
+        .. c:member:: METHOD_FLAGS_MEMBER_ACCESS_MASK
+
+        .. c:member:: METHOD_FLAGS_COMPILER_CONTROLLED
+
+        .. c:member:: METHOD_FLAGS_PRIVATE           
+
+        .. c:member:: METHOD_FLAGS_FAM_AND_ASSEM     
+
+        .. c:member:: METHOD_FLAGS_ASSEM             
+
+        .. c:member:: METHOD_FLAGS_FAMILY            
+
+        .. c:member:: METHOD_FLAGS_FAM_OR_ASSEM      
+
+        .. c:member:: METHOD_FLAGS_PUBLIC            
+
+        .. c:member:: METHOD_FLAGS_STATIC            
+
+        .. c:member:: METHOD_FLAGS_FINAL             
+
+        .. c:member:: METHOD_FLAGS_VIRTUAL           
+
+        .. c:member:: METHOD_FLAGS_HIDE_BY_SIG       
+
+        .. c:member:: METHOD_FLAGS_VTABLE_LAYOUT_MASK
+
+        .. c:member:: METHOD_FLAGS_REUSE_SLOT        
+
+        .. c:member:: METHOD_FLAGS_NEW_SLOT          
+
+        .. c:member:: METHOD_FLAGS_STRICT            
+
+        .. c:member:: METHOD_FLAGS_ABSTRACT          
+
+        .. c:member:: METHOD_FLAGS_SPECIAL_NAME      
+
+        .. c:member:: METHOD_FLAGS_PINVOKE_IMPL      
+
+        .. c:member:: METHOD_FLAGS_UNMANAGED_EXPORT  
+
+        .. c:member:: METHOD_FLAGS_RTS_SPECIAL_NAME  
+
+        .. c:member:: METHOD_FLAGS_HAS_SECURITY      
+
+        .. c:member:: METHOD_FLAGS_REQUIRE_SEC_OBJECT
+
+        *Example: dotnet.methods[0].Flags & dotnet.METHOD_FLAGS_STATIC*
+
+    .. c:member:: Name
+
+        method name
+
+        *Example: dotnet.methods[0].name == "Foo"*
+
+.. c:type:: number_of_typerefs
+
+    the number of type references in the file
+
+.. c:type:: typerefs
+
+    A zero based array of type references, logical descriptions of user-defined 
+    types that are referenced in the current module. Individual typerefs can
+    be access by using the [] operator. Each typeref has the following
+    attributes:
+
+    .. c:member:: Name
+
+    *Example: dotnet.typerefs[0].Name == "Decoder"*
+
+    .. c:member:: NameSpace
+
+    *Example: dotnet.typerefs[0].Namespace == "System.Text"*
 
 .. c:type:: number_of_user_strings
 
