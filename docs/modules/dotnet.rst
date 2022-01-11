@@ -17,7 +17,7 @@ using attributes and features of the .NET file format. Let's see some examples:
     rule not_exactly_five_streams
     {
         condition:
-            dotnet.number_of_rstreams != 5
+            dotnet.number_of_streams != 5
     }
 
     rule blop_stream
