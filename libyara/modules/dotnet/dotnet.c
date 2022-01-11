@@ -1730,6 +1730,8 @@ void dotnet_parse_com(PE* pe)
   if (yr_le32toh(metadata->Magic) != NET_METADATA_MAGIC)
     return;
 
+  set_integer(1, pe->object, "is_dotnet");
+
   // Version length must be between 1 and 255, and be a multiple of 4.
   // Also make sure it fits in pe.
   md_len = yr_le32toh(metadata->Length);
@@ -1822,6 +1824,8 @@ begin_declarations
   declare_integer("METHOD_IMPL_FLAGS_SYNCHRONIZED");
   declare_integer("METHOD_IMPL_FLAGS_NO_INLINING");
   declare_integer("METHOD_IMPL_FLAGS_NO_OPTIMIZATION");
+
+  declare_integer("is_dotnet");
 
   declare_integer("Flags");
   declare_integer("major_runtime_version");
@@ -1918,6 +1922,8 @@ int module_load(
   YR_MEMORY_BLOCK* block;
   YR_MEMORY_BLOCK_ITERATOR* iterator = context->iterator;
   const uint8_t* block_data = NULL;
+
+  set_integer(0, module_object, "is_dotnet");
 
   // Runtime Flags
   set_integer(COMIMAGE_FLAGS_ILONLY, module_object, "COMIMAGE_FLAGS_ILONLY");
