@@ -202,6 +202,24 @@ Reference
         String containing the public key or token which identifies the author of
         this assembly.
 
+.. c:type:: number_of_memberrefs
+
+    the number of memberrefs in the file
+
+.. c:type:: memberrefs
+
+    a zero-based array of memberrefs associating Methods to fields of a class.
+    Individual memberrefs can be access by using the [] operator. Each
+    memberref has the following attributes:
+
+    .. c:member:: name
+
+        memberref name
+
+        *Example: dotnet.memberrefs[18].name == "CompareTo"*
+
+    
+
 .. c:type:: number_of_methods
 
     the number of methods in the file
