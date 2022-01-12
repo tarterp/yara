@@ -215,6 +215,29 @@ typedef struct _TILDE_HEADER
 
 //
 // Module table
+// ECMA-335 Section II.22.25
+//
+typedef struct _MEMBERREF_TABLE
+{
+  union
+  {
+    WORD Class_Short;
+    DWORD Class_Long;
+  } Class;
+  union
+  {
+    WORD Name_Short;
+    DWORD Name_Long;
+  } Name;
+  union
+  {
+    WORD Signature_Short;
+    DWORD Signature_Long;
+  } Signature;
+}MEMBERREF_TABLE, *PMEMBERREF_TABLE;
+
+//
+// Module table
 // ECMA-335 Section II.22.30
 //
 typedef struct _MODULE_TABLE

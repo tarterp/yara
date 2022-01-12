@@ -352,6 +352,7 @@ void dotnet_parse_tilde_2(
   PFIELDRVA_TABLE fieldrva_table;
   PMANIFESTRESOURCE_TABLE manifestresource_table;
   PMETHODDEF_TABLE methoddef_table;
+  PMEMBERREF_TABLE memberref_table;
   PMODULEREF_TABLE moduleref_table;
   PTYPEREF_TABLE typeref_table;
   PCUSTOMATTRIBUTE_TABLE customattribute_table;
@@ -650,6 +651,35 @@ void dotnet_parse_tilde_2(
       row_size = (index_size + index_sizes.string + index_sizes.blob);
       memberref_row_size = row_size;
       memberref_ptr = table_offset;
+
+      for (i = 0; i < num_rows; i++)
+      {
+        memberref_table = (PMEMBERREF_TABLE) memberref_ptr;
+
+        if (!fits_in_pe(pe, memberref_table, row_size))
+          break;
+
+        if (index_sizes.string == 4)
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le32toh(*(DWORD*) (memberref_ptr + index_size)));
+        else
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le16toh(*(WORD*) (memberref_ptr + index_size)));
+
+        if (name != NULL)
+        {
+          set_string(name, pe->object, "memberrefs[%i].Name", i);
+        }
+
+        memberref_ptr += row_size;
+      }
+
+      set_integer(i, pe->object, "number_of_memberrefs");
+
       table_offset += row_size * num_rows;
       break;
 
@@ -1856,6 +1886,12 @@ begin_declarations
   end_struct_array("streams")
 
   declare_integer("number_of_streams");
+
+  begin_struct_array("memberrefs")
+    declare_string("Name");
+  end_struct_array("memberrefs")
+
+  declare_integer("number_of_memberrefs");
 
   begin_struct_array("methods")
     declare_integer("RVA");
