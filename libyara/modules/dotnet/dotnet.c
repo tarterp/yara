@@ -672,7 +672,7 @@ void dotnet_parse_tilde_2(
 
         if (name != NULL)
         {
-          set_string(name, pe->object, "memberrefs[%i].Name", i);
+          set_string(name, pe->object, "memberrefs[%i].name", i);
         }
 
         memberref_ptr += row_size;
@@ -1888,7 +1888,7 @@ begin_declarations
   declare_integer("number_of_streams");
 
   begin_struct_array("memberrefs")
-    declare_string("Name");
+    declare_string("name");
   end_struct_array("memberrefs")
 
   declare_integer("number_of_memberrefs");
