@@ -514,8 +514,6 @@ typedef struct _INDEX_SIZES
   uint8_t assemblyrefprocessor;
   uint8_t assemblyref;
   uint8_t genericparam;
-  uint8_t signature;
-  uint8_t resolutionscope;
 } INDEX_SIZES, *PINDEX_SIZES;
 
 #pragma pack(pop)

@@ -573,7 +573,7 @@ void dotnet_parse_tilde_2(
 
     case BIT_METHODDEF:
       row_size =
-          (4 + 2 + 2 + index_sizes.string + index_sizes.signature +
+          (4 + 2 + 2 + index_sizes.string + index_sizes.blob +
            index_sizes.param);
 
       row_ptr = table_offset;
