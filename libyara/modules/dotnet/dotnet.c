@@ -511,7 +511,7 @@ void dotnet_parse_tilde_2(
 
         if (name != NULL)
         {
-          set_string(name, pe->object, "typerefs[%i].Name", i);
+          set_string(name, pe->object, "typerefs[%i].name", i);
         }
 
         // Namespace has variable sized fields prior in struct
@@ -529,7 +529,7 @@ void dotnet_parse_tilde_2(
                   *(WORD*) (typeref_ptr + index_size + index_sizes.string)));
         if (name != NULL)
         {
-          set_string(name, pe->object, "typerefs[%i].Namespace", i);
+          set_string(name, pe->object, "typerefs[%i].namespace", i);
         }
 
         typeref_ptr += typeref_row_size;
@@ -586,18 +586,18 @@ void dotnet_parse_tilde_2(
           break;
 
         set_integer(
-            yr_le32toh(methoddef_table->RVA), pe->object, "methods[%i].RVA", i);
+            yr_le32toh(methoddef_table->RVA), pe->object, "methods[%i].rva", i);
 
         set_integer(
             yr_le32toh(methoddef_table->ImplFlags),
             pe->object,
-            "methods[%i].ImplFlags",
+            "methods[%i].impl_flags",
             i);
 
         set_integer(
             yr_le32toh(methoddef_table->Flags),
             pe->object,
-            "methods[%i].Flags",
+            "methods[%i].flags",
             i);
 
         name = pe_get_dotnet_string(
@@ -605,7 +605,7 @@ void dotnet_parse_tilde_2(
 
         if (name != NULL)
         {
-          set_string(name, pe->object, "methods[%i].Name", i);
+          set_string(name, pe->object, "methods[%i].name", i);
         }
 
         row_ptr += row_size;
@@ -1751,7 +1751,7 @@ void dotnet_parse_com(PE* pe)
 
   cli_header = (PCLI_HEADER)(pe->data + offset);
 
-  set_integer(yr_le32toh(cli_header->Flags), pe->object, "Flags");
+  set_integer(yr_le32toh(cli_header->Flags), pe->object, "flags");
 
   set_integer(
       yr_le16toh(cli_header->MajorRuntimeVersion),
@@ -1874,7 +1874,7 @@ begin_declarations
 
   declare_integer("is_dotnet");
 
-  declare_integer("Flags");
+  declare_integer("flags");
   declare_integer("major_runtime_version");
   declare_integer("minor_runtime_version");
   declare_integer("entry_point");
@@ -1894,17 +1894,17 @@ begin_declarations
   declare_integer("number_of_memberrefs");
 
   begin_struct_array("methods")
-    declare_integer("RVA");
-    declare_integer("ImplFlags");
-    declare_integer("Flags");
-    declare_string("Name");
+    declare_integer("rva");
+    declare_integer("impl_flags");
+    declare_integer("flags");
+    declare_string("name");
   end_struct_array("methods");
 
   declare_integer("number_of_methods");
 
   begin_struct_array("typerefs")
-    declare_string("Name");
-    declare_string("Namespace");
+    declare_string("name");
+    declare_string("namespace");
   end_struct_array("typerefs");
 
   declare_integer("number_of_typerefs");

@@ -42,9 +42,9 @@ Reference
 
     The major version contained in the CLI header
 
-.. c:type:: Flags
+.. c:type:: flags
 
-    CLI header Runtime Flags contains the following values
+    CLI header runtime flags contains the following values
     
     .. c:member:: CORHEADER_IL_ONLY           
 
@@ -60,9 +60,9 @@ Reference
 
 .. c:type:: entry_point
 
-    If CORHEADER_NATIVE_ENTRYPOINT is set, EntryPointRVA represents an RVA 
+    If CORHEADER_NATIVE_ENTRYPOINT is set, entry_point represents an RVA 
     to a native entrypoint. If CORHEADER_NATIVE_ENTRYPOINT is not set, 
-    EntryPointToken represents a managed entrypoint.
+    entry_point represents a managed entrypoint.
 
 .. c:type:: version
 
@@ -230,11 +230,11 @@ Reference
     methods can be accessed by using the [] operator. Each method has the
     following attributes:
 
-    .. c:member:: RVA
+    .. c:member:: rva
 
         A relative virtual address of the method
 
-    .. c:member:: ImplFlags
+    .. c:member:: impl_flags
 
         Integer representing method implementation attributes with one of the 
         following values:
@@ -267,9 +267,9 @@ Reference
         
         .. c:member:: METHOD_IMPL_FLAGS_NO_OPTIMIZATION
 
-        *Example: dotnet.methods[0].ImplFlags & dotnet.METHOD_IMPL_FLAGS_IS_NATIVE*
+        *Example: dotnet.methods[0].impl_flags & dotnet.METHOD_IMPL_FLAGS_IS_NATIVE*
 
-    .. c:member:: Flags
+    .. c:member:: flags
 
         .. c:member:: METHOD_FLAGS_MEMBER_ACCESS_MASK
 
@@ -319,7 +319,7 @@ Reference
 
         *Example: dotnet.methods[0].Flags & dotnet.METHOD_FLAGS_STATIC*
 
-    .. c:member:: Name
+    .. c:member:: name
 
         method name
 
@@ -336,13 +336,13 @@ Reference
     be access by using the [] operator. Each typeref has the following
     attributes:
 
-    .. c:member:: Name
+    .. c:member:: name
 
-    *Example: dotnet.typerefs[0].Name == "Decoder"*
+    *Example: dotnet.typerefs[0].name == "Decoder"*
 
-    .. c:member:: NameSpace
+    .. c:member:: nameSpace
 
-    *Example: dotnet.typerefs[0].Namespace == "System.Text"*
+    *Example: dotnet.typerefs[0].namespace == "System.Text"*
 
 .. c:type:: number_of_user_strings
 

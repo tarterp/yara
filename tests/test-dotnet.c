@@ -96,7 +96,7 @@ int main(int argc, char** argv)
       rule test { \
         condition: \
           dotnet.entry_point == 0x600027A and \
-          dotnet.Flags & ( \
+          dotnet.flags & ( \
             dotnet.COMIMAGE_FLAGS_ILONLY & \
             dotnet.COMIMAGE_FLAGS_32BITREQUIRED) == \
             dotnet.COMIMAGE_FLAGS_ILONLY & \
@@ -110,16 +110,16 @@ int main(int argc, char** argv)
       rule test { \
         condition: \
           for any method in dotnet.methods : ( \
-              method.Name == \"DoSetControlValues\" and \
-              method.RVA == 0x2830 and \
-              method.ImplFlags & ( \
+              method.name == \"DoSetControlValues\" and \
+              method.rva == 0x2830 and \
+              method.impl_flags & ( \
                   dotnet.METHOD_IMPL_FLAGS_IL & \
                   dotnet.METHOD_IMPL_FLAGS_MANAGED & \
                   dotnet.METHOD_IMPL_FLAGS_NO_INLINING) == \
                   dotnet.METHOD_IMPL_FLAGS_IL & \
                   dotnet.METHOD_IMPL_FLAGS_MANAGED & \
                   dotnet.METHOD_IMPL_FLAGS_NO_INLINING and \
-              method.Flags & ( \
+              method.flags & ( \
                   dotnet.METHOD_FLAGS_FAMILY & \
                   dotnet.METHOD_FLAGS_VIRTUAL & \
                   dotnet.METHOD_FLAGS_HIDE_BY_SIG & \
@@ -138,8 +138,8 @@ int main(int argc, char** argv)
       rule test { \
         condition: \
           for any typeref in dotnet.typerefs : ( \
-            typeref.Namespace == \"DVDVideoSoft.Utils\" and \
-            typeref.Name == \"WindowUtils\") \
+            typeref.namespace == \"DVDVideoSoft.Utils\" and \
+            typeref.name == \"WindowUtils\") \
       }",
       "tests/data/"
       "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
