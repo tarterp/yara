@@ -1183,6 +1183,7 @@ void dotnet_parse_tilde_2(
 
       row_size = (2 + index_size + index_sizes.string + index_sizes.moduleref);
       implmap_ptr = table_offset;
+
       for (i = 0; i < num_rows; i++)
       {
         implmap_table = (PIMPLMAP_TABLE) implmap_ptr;
@@ -1196,6 +1197,11 @@ void dotnet_parse_tilde_2(
           "impl_maps[%i].mapping_flags",
           i);
 
+        // Names can be NULL, but still add it to list. This will support
+        // tracing references to MemberForward and Import Scope. 
+        // PInvoke doesn't have to fill in the name if the MemberForwad
+        // method is a native unmanaged method. This can be seen with
+        // implicit PInvoke examples.
         if (index_sizes.string == 4)
           name = pe_get_dotnet_string(
               pe,
