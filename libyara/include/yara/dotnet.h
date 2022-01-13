@@ -103,6 +103,24 @@ typedef struct _CLI_HEADER
 #define METHOD_IMPL_FLAGS_NO_OPTIMIZATION     0x0040
 
 //
+// Flags for ImplMap [PInvokeAttributes]
+// ECMA-335 Section II.23.1.8
+//
+#define PINVOKE_FLAGS_NO_MANGLE               0x0001
+#define PINVOKE_FLAGS_CHAR_SET_MASK           0x0006
+#define PINVOKE_FLAGS_CHAR_SET_NOT_SPEC       0x0000
+#define PINVOKE_FLAGS_CHAR_SET_ANSI           0x0002
+#define PINVOKE_FLAGS_CHAR_SET_UNICODE        0x0004
+#define PINVOKE_FLAGS_CHAR_SET_AUTO           0x0006
+#define PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR  0x0040
+#define PINVOKE_FLAGS_CALL_CONV_MASK          0x0700
+#define PINVOKE_FLAGS_CALL_CONV_PLATFORM_API  0x0100
+#define PINVOKE_FLAGS_CALL_CONV_CDECL         0x0200
+#define PINVOKE_FLAGS_CALL_CONV_STDCALL       0x0300
+#define PINVOKE_FLAGS_CALL_CONV_THISCALL      0x0400
+#define PINVOKE_FLAGS_CALL_CONV_FASTCALL      0x0500
+
+//
 // CLI MetaData
 // ECMA-335 Section II.24.2.1
 //
@@ -311,6 +329,30 @@ typedef struct _ASSEMBLYREF_TABLE
     DWORD Name_Long;
   } Name;
 } ASSEMBLYREF_TABLE, *PASSEMBLYREF_TABLE;
+
+//
+// Manifest Resource Table
+// ECMA-335 Section II.22.22
+//
+typedef struct _IMPLMAP_TABLE
+{
+  WORD MappingFlags;
+  union
+  {
+    WORD MemberForwarded_Short;
+    DWORD MemberForwarded_Long;
+  } MemberForwarded;
+  union
+  {
+    WORD Name_Short;
+    DWORD Name_Long;
+  } ImportName;
+  union
+  {
+    WORD ImportScope_Short;
+    DWORD ImportScope_Long;
+  } ImportScope;
+} IMPLMAP_TABLE, *PIMPLMAP_TABLE;
 
 //
 // Manifest Resource Table

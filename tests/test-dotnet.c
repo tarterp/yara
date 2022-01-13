@@ -151,7 +151,21 @@ int main(int argc, char** argv)
           for any i in (0..dotnet.number_of_memberrefs - 1): ( \
             dotnet.memberrefs[i].name == \"CompareTo\" and \
             dotnet.memberrefs[i+1].name == \"get_IsDirectory\" \
-          ) \  
+          ) \
+      }",
+      "tests/data/"
+      "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");
+
+  assert_true_rule_file(
+      "import \"dotnet\" \
+      rule test { \
+        condition: \
+          for any imap in dotnet.impl_maps : ( \
+              imap.import_name == \"RtlZeroMemory\" and \
+              imap.mapping_flags & \
+                  dotnet.PINVOKE_FLAGS_CALL_CONV_PLATFORM_API == \
+                  dotnet.PINVOKE_FLAGS_CALL_CONV_PLATFORM_API \
+          ) \
       }",
       "tests/data/"
       "33fc70f99be6d2833ae48852d611c8048d0c053ed0b2c626db4dbe902832a08b");

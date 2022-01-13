@@ -355,6 +355,7 @@ void dotnet_parse_tilde_2(
   PMEMBERREF_TABLE memberref_table;
   PMODULEREF_TABLE moduleref_table;
   PTYPEREF_TABLE typeref_table;
+  PIMPLMAP_TABLE implmap_table;
   PCUSTOMATTRIBUTE_TABLE customattribute_table;
   PCONSTANT_TABLE constant_table;
   DWORD resource_size, implementation;
@@ -397,6 +398,7 @@ void dotnet_parse_tilde_2(
   // CustomAttribute through MemberRef to TypeRef.
 
   uint8_t* typeref_ptr = NULL;
+  uint8_t* implmap_ptr = NULL;
   uint8_t* memberref_ptr = NULL;
   uint32_t typeref_row_size = 0;
   uint32_t memberref_row_size = 0;
@@ -1169,16 +1171,53 @@ void dotnet_parse_tilde_2(
 
     case BIT_IMPLMAP:
       row_count = max_rows(
-          2, yr_le32toh(rows.field), yr_le32toh(rows.methoddef));
+          3, 
+          yr_le32toh(rows.field), 
+          yr_le32toh(rows.methoddef),
+          yr_le32toh(rows.moduleref));
 
       if (row_count > (0xFFFF >> 0x01))
         index_size = 4;
       else
         index_size = 2;
 
-      table_offset += (2 + index_size + index_sizes.string +
-                       index_sizes.moduleref) *
-                      num_rows;
+      row_size = (2 + index_size + index_sizes.string + index_sizes.moduleref);
+      implmap_ptr = table_offset;
+      for (i = 0; i < num_rows; i++)
+      {
+        implmap_table = (PIMPLMAP_TABLE) implmap_ptr;
+
+        if (!fits_in_pe(pe, implmap_table, row_size))
+          break;
+
+        set_integer(
+          yr_le16toh(implmap_table->MappingFlags), 
+          pe->object, 
+          "impl_maps[%i].mapping_flags",
+          i);
+
+        if (index_sizes.string == 4)
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le32toh(*(DWORD*) (implmap_ptr + 2 +  index_size)));
+        else
+          name = pe_get_dotnet_string(
+              pe,
+              string_offset,
+              yr_le16toh(*(WORD*) (implmap_ptr + 2 + index_size)));
+
+        if (name != NULL)
+        {
+          set_string(name, pe->object, "impl_maps[%i].import_name", i);
+        }
+
+        implmap_ptr += row_size;
+      }
+
+      set_integer(i, pe->object, "number_of_impl_maps");
+
+      table_offset += row_size * num_rows;
       break;
 
     case BIT_FIELDRVA:
@@ -1872,6 +1911,20 @@ begin_declarations
   declare_integer("METHOD_IMPL_FLAGS_NO_INLINING");
   declare_integer("METHOD_IMPL_FLAGS_NO_OPTIMIZATION");
 
+  declare_integer("PINVOKE_FLAGS_NO_MANGLE");
+  declare_integer("PINVOKE_FLAGS_CHAR_SET_MASK");
+  declare_integer("PINVOKE_FLAGS_CHAR_SET_NOT_SPEC");
+  declare_integer("PINVOKE_FLAGS_CHAR_SET_ANSI");
+  declare_integer("PINVOKE_FLAGS_CHAR_SET_UNICODE");
+  declare_integer("PINVOKE_FLAGS_CHAR_SET_AUTO");
+  declare_integer("PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR");
+  declare_integer("PINVOKE_FLAGS_CALL_CONV_MASK");
+  declare_integer("PINVOKE_FLAGS_CALL_CONV_PLATFORM_API");
+  declare_integer("PINVOKE_FLAGS_CALL_CONV_CDECL");
+  declare_integer("PINVOKE_FLAGS_CALL_CONV_STDCALL");
+  declare_integer("PINVOKE_FLAGS_CALL_CONV_THISCALL");
+  declare_integer("PINVOKE_FLAGS_CALL_CONV_FASTCALL");
+
   declare_integer("is_dotnet");
 
   declare_integer("flags");
@@ -1908,6 +1961,13 @@ begin_declarations
   end_struct_array("typerefs");
 
   declare_integer("number_of_typerefs");
+
+  begin_struct_array("impl_maps")
+    declare_integer("mapping_flags");
+    declare_string("import_name");
+  end_struct_array("impl_maps");
+
+  declare_integer("number_of_impl_maps");
 
   declare_string_array("guids");
   declare_integer("number_of_guids");
@@ -2094,6 +2154,60 @@ int module_load(
       METHOD_IMPL_FLAGS_NO_OPTIMIZATION,
       module_object,
       "METHOD_IMPL_FLAGS_NO_OPTIMIZATION");
+
+  // ImplMap Flags
+  set_integer(
+    PINVOKE_FLAGS_NO_MANGLE,
+    module_object,
+    "PINVOKE_FLAGS_NO_MANGLE");
+  set_integer(
+    PINVOKE_FLAGS_CHAR_SET_MASK,
+    module_object,
+    "PINVOKE_FLAGS_CHAR_SET_MASK");
+  set_integer(
+    PINVOKE_FLAGS_CHAR_SET_NOT_SPEC,
+    module_object,
+    "PINVOKE_FLAGS_CHAR_SET_NOT_SPEC");
+  set_integer(
+    PINVOKE_FLAGS_CHAR_SET_ANSI,
+    module_object,
+    "PINVOKE_FLAGS_CHAR_SET_ANSI");
+  set_integer(
+    PINVOKE_FLAGS_CHAR_SET_UNICODE,
+    module_object,
+    "PINVOKE_FLAGS_CHAR_SET_UNICODE");
+  set_integer(
+    PINVOKE_FLAGS_CHAR_SET_AUTO,
+    module_object,
+    "PINVOKE_FLAGS_CHAR_SET_AUTO");
+  set_integer(
+    PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR,
+    module_object,
+    "PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR");
+  set_integer(
+    PINVOKE_FLAGS_CALL_CONV_MASK,
+    module_object,
+    "PINVOKE_FLAGS_CALL_CONV_MASK");
+  set_integer(
+    PINVOKE_FLAGS_CALL_CONV_PLATFORM_API,
+    module_object,
+    "PINVOKE_FLAGS_CALL_CONV_PLATFORM_API");
+  set_integer(
+    PINVOKE_FLAGS_CALL_CONV_CDECL,
+    module_object,
+    "PINVOKE_FLAGS_CALL_CONV_CDECL");
+  set_integer(
+    PINVOKE_FLAGS_CALL_CONV_STDCALL,
+    module_object,
+    "PINVOKE_FLAGS_CALL_CONV_STDCALL");
+  set_integer(
+    PINVOKE_FLAGS_CALL_CONV_THISCALL,
+    module_object,
+    "PINVOKE_FLAGS_CALL_CONV_THISCALL");
+  set_integer(
+    PINVOKE_FLAGS_CALL_CONV_FASTCALL,
+    module_object,
+    "PINVOKE_FLAGS_CALL_CONV_FASTCALL");    
 
   foreach_memory_block(iterator, block)
   {
