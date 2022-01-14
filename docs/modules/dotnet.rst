@@ -46,17 +46,12 @@ Reference
 
     CLI header runtime flags contains the following values
     
-    .. c:member:: CORHEADER_IL_ONLY           
-
-    .. c:member:: CORHEADER_32_BIT_REQUIRED    
-
-    .. c:member:: CORHEADER_IL_LIBRARY       
-
-    .. c:member:: CORHEADER_STRONG_NAME_SIGNED 
-
-    .. c:member:: CORHEADER_NATIVE_ENTRYPOINT
-
-    .. c:member:: CORHEADER_TRACK_DEBUG_DATA
+    .. c:type:: CORHEADER_IL_ONLY
+    .. c:type:: CORHEADER_32_BIT_REQUIRED    
+    .. c:type:: CORHEADER_IL_LIBRARY       
+    .. c:type:: CORHEADER_STRONG_NAME_SIGNED 
+    .. c:type:: CORHEADER_NATIVE_ENTRYPOINT
+    .. c:type:: CORHEADER_TRACK_DEBUG_DATA
 
 .. c:type:: entry_point
 
@@ -87,12 +82,12 @@ Reference
     stream object has the following attributes:
 
     .. c:member:: name
-
-        Stream name.
+    
+        Stream name
 
     .. c:member:: offset
 
-        Stream offset.
+        Stream offset
 
     .. c:member:: size
 
@@ -239,83 +234,48 @@ Reference
         Integer representing method implementation attributes with one of the 
         following values:
 
-        .. c:member:: METHOD_IMPL_FLAGS_CODE_TYPE_MASK
-        
-        .. c:member:: METHOD_IMPL_FLAGS_IL            
-        
-        .. c:member:: METHOD_IMPL_FLAGS_IS_NATIVE     
-        
-        .. c:member:: METHOD_IMPL_FLAGS_OPTIL         
-        
-        .. c:member:: METHOD_IMPL_FLAGS_RUNTIME       
-        
-        .. c:member:: METHOD_IMPL_FLAGS_MANAGED_MASK  
-        
-        .. c:member:: METHOD_IMPL_FLAGS_UNMANAGED     
-        
-        .. c:member:: METHOD_IMPL_FLAGS_MANAGED       
-        
-        .. c:member:: METHOD_IMPL_FLAGS_FORWARD_REF   
-        
-        .. c:member:: METHOD_IMPL_FLAGS_PRESERVE_SIG  
-        
-        .. c:member:: METHOD_IMPL_FLAGS_INTERNAL_CALL 
-        
-        .. c:member:: METHOD_IMPL_FLAGS_SYNCHRONIZED  
-        
-        .. c:member:: METHOD_IMPL_FLAGS_NO_INLINING   
-        
-        .. c:member:: METHOD_IMPL_FLAGS_NO_OPTIMIZATION
+        .. c:type:: METHOD_IMPL_FLAGS_CODE_TYPE_MASK      
+        .. c:type:: METHOD_IMPL_FLAGS_IL            
+        .. c:type:: METHOD_IMPL_FLAGS_IS_NATIVE     
+        .. c:type:: METHOD_IMPL_FLAGS_OPTIL                
+        .. c:type:: METHOD_IMPL_FLAGS_RUNTIME              
+        .. c:type:: METHOD_IMPL_FLAGS_MANAGED_MASK         
+        .. c:type:: METHOD_IMPL_FLAGS_UNMANAGED            
+        .. c:type:: METHOD_IMPL_FLAGS_MANAGED               
+        .. c:type:: METHOD_IMPL_FLAGS_FORWARD_REF          
+        .. c:type:: METHOD_IMPL_FLAGS_PRESERVE_SIG         
+        .. c:type:: METHOD_IMPL_FLAGS_INTERNAL_CALL        
+        .. c:type:: METHOD_IMPL_FLAGS_SYNCHRONIZED         
+        .. c:type:: METHOD_IMPL_FLAGS_NO_INLINING          
+        .. c:type:: METHOD_IMPL_FLAGS_NO_OPTIMIZATION
 
         *Example: dotnet.methods[0].impl_flags & dotnet.METHOD_IMPL_FLAGS_IS_NATIVE*
 
     .. c:member:: flags
 
-        .. c:member:: METHOD_FLAGS_MEMBER_ACCESS_MASK
-
-        .. c:member:: METHOD_FLAGS_COMPILER_CONTROLLED
-
-        .. c:member:: METHOD_FLAGS_PRIVATE           
-
-        .. c:member:: METHOD_FLAGS_FAM_AND_ASSEM     
-
-        .. c:member:: METHOD_FLAGS_ASSEM             
-
-        .. c:member:: METHOD_FLAGS_FAMILY            
-
-        .. c:member:: METHOD_FLAGS_FAM_OR_ASSEM      
-
-        .. c:member:: METHOD_FLAGS_PUBLIC            
-
-        .. c:member:: METHOD_FLAGS_STATIC            
-
-        .. c:member:: METHOD_FLAGS_FINAL             
-
-        .. c:member:: METHOD_FLAGS_VIRTUAL           
-
-        .. c:member:: METHOD_FLAGS_HIDE_BY_SIG       
-
-        .. c:member:: METHOD_FLAGS_VTABLE_LAYOUT_MASK
-
-        .. c:member:: METHOD_FLAGS_REUSE_SLOT        
-
-        .. c:member:: METHOD_FLAGS_NEW_SLOT          
-
-        .. c:member:: METHOD_FLAGS_STRICT            
-
-        .. c:member:: METHOD_FLAGS_ABSTRACT          
-
-        .. c:member:: METHOD_FLAGS_SPECIAL_NAME      
-
-        .. c:member:: METHOD_FLAGS_PINVOKE_IMPL      
-
-        .. c:member:: METHOD_FLAGS_UNMANAGED_EXPORT  
-
-        .. c:member:: METHOD_FLAGS_RTS_SPECIAL_NAME  
-
-        .. c:member:: METHOD_FLAGS_HAS_SECURITY      
-
-        .. c:member:: METHOD_FLAGS_REQUIRE_SEC_OBJECT
+        .. c:type:: METHOD_FLAGS_MEMBER_ACCESS_MASK
+        .. c:type:: METHOD_FLAGS_COMPILER_CONTROLLED
+        .. c:type:: METHOD_FLAGS_PRIVATE           
+        .. c:type:: METHOD_FLAGS_FAM_AND_ASSEM     
+        .. c:type:: METHOD_FLAGS_ASSEM             
+        .. c:type:: METHOD_FLAGS_FAMILY            
+        .. c:type:: METHOD_FLAGS_FAM_OR_ASSEM      
+        .. c:type:: METHOD_FLAGS_PUBLIC            
+        .. c:type:: METHOD_FLAGS_STATIC            
+        .. c:type:: METHOD_FLAGS_FINAL             
+        .. c:type:: METHOD_FLAGS_VIRTUAL           
+        .. c:type:: METHOD_FLAGS_HIDE_BY_SIG       
+        .. c:type:: METHOD_FLAGS_VTABLE_LAYOUT_MASK
+        .. c:type:: METHOD_FLAGS_REUSE_SLOT        
+        .. c:type:: METHOD_FLAGS_NEW_SLOT          
+        .. c:type:: METHOD_FLAGS_STRICT            
+        .. c:type:: METHOD_FLAGS_ABSTRACT          
+        .. c:type:: METHOD_FLAGS_SPECIAL_NAME      
+        .. c:type:: METHOD_FLAGS_PINVOKE_IMPL      
+        .. c:type:: METHOD_FLAGS_UNMANAGED_EXPORT  
+        .. c:type:: METHOD_FLAGS_RTS_SPECIAL_NAME  
+        .. c:type:: METHOD_FLAGS_HAS_SECURITY      
+        .. c:type:: METHOD_FLAGS_REQUIRE_SEC_OBJECT
 
         *Example: dotnet.methods[0].Flags & dotnet.METHOD_FLAGS_STATIC*
 
@@ -337,12 +297,16 @@ Reference
     attributes:
 
     .. c:member:: name
+        
+        typeref name
 
-    *Example: dotnet.typerefs[0].name == "Decoder"*
+        *Example: dotnet.typerefs[0].name == "Decoder"*
 
     .. c:member:: nameSpace
 
-    *Example: dotnet.typerefs[0].namespace == "System.Text"*
+        typeref namespace
+
+        *Example: dotnet.typerefs[0].namespace == "System.Text"*
 
 .. c:type:: number_of_impl_maps
 
@@ -358,37 +322,27 @@ Reference
     following attributes.
 
     .. c:member:: import_name
+
+        impl_map import name
     
     .. c:member:: mapping_flags
 
         Integer representing flags for the impl_map entry with one of the
         following values:
 
-        .. c:member:: PINVOKE_FLAGS_NO_MANGLE
-
-        .. c:member:: PINVOKE_FLAGS_CHAR_SET_MASK
-
-        .. c:member:: PINVOKE_FLAGS_CHAR_SET_NOT_SPEC
-
-        .. c:member:: PINVOKE_FLAGS_CHAR_SET_ANSI
-        
-        .. c:member:: PINVOKE_FLAGS_CHAR_SET_UNICODE
-        
-        .. c:member:: PINVOKE_FLAGS_CHAR_SET_AUTO
-        
-        .. c:member:: PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR
-        
-        .. c:member:: PINVOKE_FLAGS_CALL_CONV_MASK
-        
-        .. c:member:: PINVOKE_FLAGS_CALL_CONV_PLATFORM_API
-        
-        .. c:member:: PINVOKE_FLAGS_CALL_CONV_CDECL
-        
-        .. c:member:: PINVOKE_FLAGS_CALL_CONV_STDCALL
-        
-        .. c:member:: PINVOKE_FLAGS_CALL_CONV_THISCALL
-        
-        .. c:member:: PINVOKE_FLAGS_CALL_CONV_FASTCALL
+        .. c:type:: PINVOKE_FLAGS_NO_MANGLE
+        .. c:type:: PINVOKE_FLAGS_CHAR_SET_MASK
+        .. c:type:: PINVOKE_FLAGS_CHAR_SET_NOT_SPEC
+        .. c:type:: PINVOKE_FLAGS_CHAR_SET_ANSI       
+        .. c:type:: PINVOKE_FLAGS_CHAR_SET_UNICODE      
+        .. c:type:: PINVOKE_FLAGS_CHAR_SET_AUTO      
+        .. c:type:: PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR      
+        .. c:type:: PINVOKE_FLAGS_CALL_CONV_MASK      
+        .. c:type:: PINVOKE_FLAGS_CALL_CONV_PLATFORM_API      
+        .. c:type:: PINVOKE_FLAGS_CALL_CONV_CDECL       
+        .. c:type:: PINVOKE_FLAGS_CALL_CONV_STDCALL        
+        .. c:type:: PINVOKE_FLAGS_CALL_CONV_THISCALL        
+        .. c:type:: PINVOKE_FLAGS_CALL_CONV_FASTCALL
 
 .. c:type:: number_of_user_strings
 
