@@ -344,6 +344,52 @@ Reference
 
     *Example: dotnet.typerefs[0].namespace == "System.Text"*
 
+.. c:type:: number_of_impl_maps
+
+    The number of PInvoke implmaps in the file
+
+.. c:type:: impl_maps
+
+    A zero based array of impl_map table row. Each entry holds information 
+    about unmanaged methods that can be reached from managed code, using PInvoke 
+    dispatch. A row is entered in the impl_map table for each parent method that
+    is defined with a .pinvokeimpl interoperation attribute. Individual 
+    impl_maps can be accessed by using the [] operator.Each impl_map has the 
+    following attributes.
+
+    .. c:member:: import_name
+    
+    .. c:member:: mapping_flags
+
+        Integer representing flags for the impl_map entry with one of the
+        following values:
+
+        .. c:member:: PINVOKE_FLAGS_NO_MANGLE
+
+        .. c:member:: PINVOKE_FLAGS_CHAR_SET_MASK
+
+        .. c:member:: PINVOKE_FLAGS_CHAR_SET_NOT_SPEC
+
+        .. c:member:: PINVOKE_FLAGS_CHAR_SET_ANSI
+        
+        .. c:member:: PINVOKE_FLAGS_CHAR_SET_UNICODE
+        
+        .. c:member:: PINVOKE_FLAGS_CHAR_SET_AUTO
+        
+        .. c:member:: PINVOKE_FLAGS_SUPPORT_GET_LAST_ERROR
+        
+        .. c:member:: PINVOKE_FLAGS_CALL_CONV_MASK
+        
+        .. c:member:: PINVOKE_FLAGS_CALL_CONV_PLATFORM_API
+        
+        .. c:member:: PINVOKE_FLAGS_CALL_CONV_CDECL
+        
+        .. c:member:: PINVOKE_FLAGS_CALL_CONV_STDCALL
+        
+        .. c:member:: PINVOKE_FLAGS_CALL_CONV_THISCALL
+        
+        .. c:member:: PINVOKE_FLAGS_CALL_CONV_FASTCALL
+
 .. c:type:: number_of_user_strings
 
     The number of user strings in the file.
