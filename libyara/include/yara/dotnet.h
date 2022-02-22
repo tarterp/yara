@@ -31,6 +31,8 @@ typedef struct _CLI_HEADER
 // Runtime flags
 // ECMA-335 Section II.25.3.3.1
 //
+// COMIMAGE_FLAGS_IL_LIBRARY is not part of ECMA-335, but it is in Windows
+// header files, to include winnt.h
 #define COMIMAGE_FLAGS_ILONLY                 0x00000001
 #define COMIMAGE_FLAGS_32BITREQUIRED          0x00000002
 #define COMIMAGE_FLAGS_IL_LIBRARY             0x00000004
@@ -48,7 +50,7 @@ typedef struct _CLI_HEADER
 #define METHOD_FLAGS_PRIVATE                  0x0001
 #define METHOD_FLAGS_FAM_AND_ASSEM            0x0002
 #define METHOD_FLAGS_ASSEM                    0x0003
-#define METHOD_FLAGS_FAMILY                   0x0005
+#define METHOD_FLAGS_FAMILY                   0x0004
 #define METHOD_FLAGS_FAM_OR_ASSEM             0x0005
 #define METHOD_FLAGS_PUBLIC                   0x0006
 
